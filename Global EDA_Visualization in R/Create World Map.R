@@ -10,7 +10,7 @@ library(extrafont) #for font Rstudio***
 
 # Natural Earth shape files -- global (Robinson) projections
 # get shapefiles from http://www.naturalearthdata.com
-shape_path <- "D:/Github/Data-Analysis/Global EDA/Natural Earth Shapes/Used Shapes"
+shape_path <- "D:/Github/Data-Analysis-Profession/Global EDA_Visualization in R/Natural Earth Shapes/Used Shapes"
 coastline_shapefile <- paste(shape_path, "/ne_50m_coastline.shp", sep="")
 ocean_shapefile <- paste(shape_path, "/ne_50m_ocean.shp", sep="")
 countries_shapefile <- paste(shape_path, "/ne_50m_admin_0_countries.shp", sep="")

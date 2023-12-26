@@ -1,6 +1,6 @@
 
 body{
-    background-image: url("D:/Github/Data-Analysis/Global EDA/Background.jpeg");
+    background-image: url("D:/Github/Data-Analysis-Profession/Global EDA_Visualization in R/Background.jpeg");
 }
 
 
@@ -35,7 +35,7 @@ p{
 
 
 body{
-    background-image: url("D:/Github/Data-Analysis/Global EDA/Background.jpeg");
+    background-image: url("D:/Github/Data-Analysis-Profession/Global EDA_Visualization in R/Background.jpeg");
     background-size:cover;
 }
 
@@ -49,7 +49,7 @@ slides > slide
 /* The background format */
 .title-slide {
         /*background: center!important;*/
-        background-image: url("D:/Github/Data-Analysis/Global EDA/World map.png");
+        background-image: url("D:/Github/Data-Analysis-Profession/Global EDA_Visualization in R/World map.png");
         background-position: center;
         background-size: 1216px 1224px;
         border-radius: 360px;
@@ -110,7 +110,7 @@ slides > slide
 /*.dark {
     position: absolute;
     background: center!important;
-    background-image:url("D:/Github/Data-Analysis/Global EDA/World map.png")!important;
+    background-image:url("D:/Github/Data-Analysis-Profession/Global EDA_Visualization in R/World map.png")!important;
   
     
 }
@@ -126,7 +126,7 @@ slides > slide
 .dark::before { 
     position: absolute; 
     background: center!important;
-    background-image: url("D:/Github/Data-Analysis/Global EDA/World map.png")!important;
+    background-image: url("D:/Github/Data-Analysis-Profession/Global EDA_Visualization in R/World map.png")!important;
     background-size: cover;
 }
 
