@@ -1,0 +1,365 @@
+---
+title: "World's Statictics 2023 <br> Exploratory Data Analysis (EDA)"
+author: "Ali Bashandy"
+date: "2023-08-17"
+output:
+  ioslides_presentation:
+    widescreen: yes
+    css: style.css
+subtitle: World Map In Robinson Projection Based on R Maps<br>https://pjbartlein.github.io/REarthSysSci/RMaps.html
+---    
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r eval=FALSE, include=FALSE}
+install.packages("tidyverse")
+install.packages("ggplot2")
+install.packages("gridExtra")
+install.packages("reshape2")
+install.packages("ggh4x")
+install.packages("scales")
+install.packages("ggpubr")
+install.packages("here")
+install.packages("visdat")
+install.packages("extrafont")
+install.packages("rgl")
+install.packages("formattable") #format numeric as currency
+install.packages("skimr")
+```
+
+```{r include=FALSE}
+library(tidyverse) # essential ***
+library(rgdal) #OgrListlayers
+#library(ggplot2) #plotting ***
+library(ggspatial) #Spatial Layer***
+library(extrafont) #for font Rstudio***
+loadfonts(device = "win", quiet = TRUE) #***
+library(readr) #Read CSV ***
+library(gridExtra) # Table themes ***
+library(skimr)
+library(gtable) # Table grouping ***
+library(grid) #Grid customization ***
+library(scales) # Table text wrap ***
+library(ggh4x) # Table panel size ***
+#library(ggrepel) # pop World map label repel
+#library(formattable) # Convert numeric to currency
+#library(sf)
+#library(leaflet)
+#library(dplyr)
+#library(RColorBrewer)
+#library(reshape2)
+#library(ggpubr)
+#library(dplyr)
+#library(here)
+#library(crayon)
+```
+
+#  Introduction
+This analysis based on Global Country Information Data set 2023 by Nidula Elgiriyewithana found in kaggle with public licence Attribution 4.0 International (CC BY 4.0). This comprehensive data set provides a wealth of information about all countries worldwide, covering a wide range of indicators and attributes. It encompasses demographic statistics, economic indicators, environmental factors, healthcare metrics, education statistics, and much more. With every country represented, this data set offers a complete global perspective on various aspects of nations, enabling in-depth analyses and cross-country comparisons.
+
+# The Question?
+
+Analyze the information about all countries worldwide then categorize them to top 10 and bottom 10. Use the information to get insight about correlation of different indicators and attributes through visualization.
+
+
+
+## Used packages and libraries
+
+|Package Name|Library Name|Used for|
+|------------|------------|--------|
+|tidyverse|tidyverse<br>readr|Has multiple packages<br>Read Data files such as CSV|
+|ggplot2|ggplot2<br>ggspatial|Data visualization<br>Spatial data framework|
+|rgl|rgdal|OGR list layer|
+|extrafont|extrafont|Adding new fonts "Algerian" in this report|
+|gridExtra|gridExtra|Setting tables themes|
+|skimr|skimr|Get the dataset summary|
+|gtable|gtable|Table grouping|
+
+install.packages("tidyverse")<br>
+install.packages("ggplot2")<br>
+install.packages("gridExtra")<br>
+install.packages("reshape2")<br>
+install.packages("ggh4x")<br>
+install.packages("scales")<br>
+install.packages("ggpubr")<br>
+install.packages("here")<br>
+install.packages("visdat")<br>
+install.packages("extrafont")<br>
+install.packages("rgl")<br>
+
+## 2.2 Installing libraries
+library(tidyverse) # essential ***
+library(extrafont) #for font Rstudio***
+loadfonts(device = "win", quiet = TRUE) #***
+library(rgdal) #Ogr***
+library(ggspatial) #Spatial***
+library(ggplot2) #plotting ***
+library(readr) #Read CSV ***
+library(gridExtra) # Table themes ***
+library(gtable) # Table grouping ***
+library(grid) #Grid customization ***
+library(scales) # Table text wrap ***
+library(ggh4x) # Table panel size ***
+library(ggrepel) # pop World map label repel
+library(formattable) # Convert numeric to currency
+library(sf)
+library(leaflet)
+library(dplyr)
+library(RColorBrewer)
+
+
+# 1. Data Processing.
+
+I have noticed that some values are not available for some countries but i decided to not drop countries with null values instead i will gather them in separate table during analysis
+
+## 1.1. Data cleaning and verification:
+
+1- Changed the name of Country "Sao Tome and Principe". It was added with unreadable characters.<br>
+2- Changed the name of column "Density (P/Km2)" to remove the line break between "Density" and "(P/Km2).<br>
+<br>
+<strong>Here are the data summary:</strong> 
+```{r load dataset, echo=FALSE, fig.height=1, fig.width=1, message=FALSE, warning=FALSE}
+dataset <- read_csv("world-data-2023.csv")
+colnames(dataset)[2] = "Density (P/Km2)"
+dataset[dataset == "S�����������"]<- "Sao Tome and Principe"
+skim(dataset)%>%
+  summary()%>%
+  print()
+
+```
+## 1.2. Creating Customized theme for Tables and output Messages.
+
+<strong>Here are the code chunk for Setting Customized output message in case of no missing data in the column</strong>
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+result_missing_data<- ggplot()+
+  geom_rect(aes(xmin=0, xmax=2, ymin=0, ymax=0.5),
+              color='darkgreen',
+              fill = 'lightgreen', 
+              alpha = 0.5) +
+  geom_text(x=1,
+              y=0.25,
+              aes(label=c("****Hooray!!! No Missing Data****")),
+              size = 12,
+              family="serif",
+              color="darkgreen") +
+  theme_void()
+```
+--------------------------------------------------------------
+<strong>Here are the code chunk for Setting customized table theme.</strong>
+```{r echo=TRUE}
+tt1 <- ttheme_default(core=list( bg_params = list(fill = "#D9E1F2"[2:1], 
+                                                  col="white",
+                                                  alpha = 0.75),
+                                 fg_params=list(col = "black",
+                                                fontface="bold",
+                                                fontsize=10,
+                                                fontfamily="serif")),
+                      colhead=list(bg_params = list(fill = "#4472C4", 
+                                                    col = "white",
+                                                    alpha = 0.75), 
+                                   fg_params=list(col = "white",
+                                                  fontface="bold",
+                                                  fontsize=14,
+                                                  fontfamily="serif")))
+```
+
+# 3. Analysis and Visualization
+
+In this phase i will conduct the following steps to gain insights for top 10 and bottom 10 countries based on population density in km2, number of population, birth rate correlation with fertility rate, and gross domestic product (GDP) :
+
+1- I will check the dataset for missing information.<br>
+2- I will extract the lowest 10 and highest 10 countries based on the previously mentioned indicators and attributes.<br>
+3- A variety of visualization methods will be used to visualize the results.
+
+## 3.1 Density (P/Km2)
+The code in this step will check the density column for missing values. If there are countries with missing values, the result will be a table with those countries. If nothing missing, an output message will pop up confirming that nothing is missing.
+<br><br>
+<strong>The result is:</strong>
+<br><br><br><br>
+```{r echo=FALSE, fig.height=0.5, fig.width=9, message=FALSE, warning=FALSE, paged.print=FALSE}
+check_desnsity<- dataset%>%
+  select(Country, `Density (P/Km2)`)%>%
+  filter(is.na(`Density (P/Km2)`))%>%
+  mutate(`Density (P/Km2)` = replace_na(0))
+
+if (0 %in% check_desnsity$`Density (P/Km2)`||
+    isTRUE(check_desnsity$`Density (P/Km2)`)
+    )
+  {
+  tc0<- tableGrob(check_desnsity,
+                  rows = NULL,
+                  theme = tt1,
+                  cols = (c("Countries with missing values","Density (P/Km2)"))
+                  )
+  tc0<- gtable_add_grob(tc0,
+                        grobs = rectGrob(gp = gpar(col = "black",fill = NA, lwd = 3)),
+                        t = 1,
+                        b = nrow(tc1),
+                        l = 1,
+                        r = ncol(tc1)
+                        )
+  tc0<- gtable_add_grob(tc0,
+                        grobs = rectGrob(gp = gpar(col = "black",fill = NA, lwd = 3)),
+                        t = 1,
+                        b=1,
+                        l = 1,
+                        r = ncol(tc1)
+                        )
+  grid.arrange(tc1, ncol = 2, nrow = 1)
+  
+  }else {
+    
+    result_missing_data
+}
+
+```
+
+## 3.1.2 Top 10 countries with the highest Density(P/Km2).
+
+
+```{r echo=FALSE, fig.align="center", fig.height=5, fig.width=10, background=NULL, message=FALSE, warning=FALSE}
+
+# Filtering top 10 Countries with the highest density/Km2.
+
+top_density<- dataset %>% 
+  select(Country, `Density (P/Km2)`)%>%
+  arrange(desc(`Density (P/Km2)`)) %>%
+  slice(1:10)
+
+# Customizing table borders.
+
+t1<- tableGrob(top_density, rows = NULL, theme = tt1)
+t1<- gtable_add_grob(t1,
+                     grobs = rectGrob(gp = gpar(col = "black",fill = NA, lwd = 1)),
+                     t = 1, b = nrow(t1), l = 1, r = ncol(t1))
+t1 <- gtable_add_grob(t1,
+                      grobs = rectGrob(gp = gpar(col = "black",fill = NA, lwd = 1)),
+                      t = 1, b=1, l = 1, r = ncol(t1))
+
+# Plotting Tables and bar charts.
+
+# Plotting bar chart of top 10 countries.
+
+p1<- ggplot(top_density, aes(x = `Density (P/Km2)`,
+                             y = reorder(Country, +`Density (P/Km2)`),
+                             fill=`Density (P/Km2)`)
+            ) + 
+  geom_bar(stat = "identity") +
+  xlim(0,29000) + 
+  ylab('Country Name') +
+  xlab('Density (P/Km2)') +
+  scale_y_discrete(labels = label_wrap(10),
+                   guide = guide_axis(n.dodge=2)
+                   ) +
+  geom_text(aes(label = `Density (P/Km2)`),
+            colour = "black",
+            hjust= -0.2
+            ) +
+  force_panelsizes(rows = unit(4, "in"),
+                   cols = unit(4, "in")
+                   ) +
+  #labs(title="Top 10 Countries with the highest density") +
+  theme_void() +
+  theme(panel.border = element_rect(fill= "transparent", size=1),
+        panel.background = element_rect(fill = "transparent"),
+        plot.title = element_text(hjust = 3,
+                                  vjust = 2,
+                                  size=16,
+                                  face = "bold",
+                                  family = "serif",
+                                  color = "#01014B"),
+        legend.position = "none",
+        axis.title = element_text(size=12,
+                                  face = "bold",
+                                  family = "serif",
+                                  color = "#01014B"),
+        axis.text = element_text(size=10,
+                                  family = "serif",
+                                  color = "black")
+        )
+
+# Displaying the tables and the bar charts.
+
+par(bg = "transparent")
+grid.draw(t1,recording=TRUE)           
+```
+
+
+## 3.1.3 Bottom 10 countries with the lowest Density(P/Km2).
+
+
+```{r echo=FALSE, fig.align="center", message=FALSE, warning=FALSE, background='black', paged.print=FALSE}
+
+# Filtering bottom 10 countries with the lowest density/Km2.
+
+bottom_density<- dataset %>%
+  select(Country, `Density (P/Km2)`)%>%
+  arrange((`Density (P/Km2)`))%>%
+  slice(1:10)
+
+# Customizing table borders.
+
+t2<- tableGrob(bottom_density, rows = NULL, theme = tt1)
+t2<- gtable_add_grob(t2,
+                     grobs = rectGrob(gp = gpar(col = "black",fill = NA, lwd = 3)),
+                     t = 1,
+                     b = nrow(t2),
+                     l = 1,
+                     r = ncol(t2)
+                     )
+t2 <- gtable_add_grob(t2,
+                      grobs = rectGrob(gp = gpar(col = "black",fill = NA, lwd = 3)),
+                      t = 1,
+                      b=1,
+                      l = 1,
+                      r = ncol(t2)
+                      )
+
+
+# Plotting bar chart of bottom 10 countries.
+
+p2<- ggplot(bottom_density, aes(x = `Density (P/Km2)`, y = reorder(Country, +`Density (P/Km2)`), fill=`Density (P/Km2)`)) + 
+  geom_bar(stat = "identity") +
+  xlim(0,6) +
+  ylab('Country Name') +
+  xlab('Density (P/Km2)') +
+  scale_y_discrete(labels = label_wrap(10),
+                   guide = guide_axis(n.dodge=2)
+                   ) +
+  geom_text(aes(label = `Density (P/Km2)`),
+            colour = "black",
+            hjust= -0.2
+            ) +
+  force_panelsizes(rows = unit(6, "in"),
+                   cols = unit(5, "in")
+                   ) +
+  labs(title="Bottom 10 Countries with the lowest density") +
+  theme_minimal() +
+  theme(panel.border = element_rect(fill=NA, size=1),
+        panel.background = element_rect(fill = NA),
+        plot.title = element_text(hjust = 0.5,
+                                  size=20,
+                                  face = "bold",
+                                  family = "serif",
+                                  color = "#01014B"),
+        legend.position = "none",
+        axis.title = element_text(size=16,
+                                  face = "bold",
+                                  family = "serif",
+                                  color = "#01014B"),
+        axis.text = element_text(size=14,
+                                  family = "serif",
+                                  color = "black")
+        )
+ 
+
+# Displaying the tables and the bar charts.
+
+grid.arrange(t2,p2, ncol = 2, nrow = 1, widths = c(5,9))
+```
+
+
+

@@ -1,0 +1,159 @@
+
+body{
+    background-image: url("D:/Github/Data-Analysis/Global EDA/Background.jpeg");
+}
+
+
+<style type="text/css">
+
+/* Formating slides body*/
+body{
+    
+    font-family: Algerian;
+    color: #01014B;
+    font-weight: 100;
+    letter-spacing: 0px;
+}
+
+h1,h2,h3,h4,h5,h6{
+    font-family: Algerian;
+    color: #01014B;
+    font-weight: 100;
+    letter-spacing: 0px;
+}
+
+p{
+    font-family: Times New Roman;
+    font-size: 24px;
+    color: black;
+    letter-spacing: 0px;
+    opacity: 1;
+}
+
+
+/* The title slide format */
+
+
+body{
+    background-image: url("D:/Github/Data-Analysis/Global EDA/Background.jpeg");
+    background-size:cover;
+}
+
+
+slides > slide
+
+{
+  overflow: visible;
+}
+
+/* The background format */
+.title-slide {
+        /*background: center!important;*/
+        background-image: url("D:/Github/Data-Analysis/Global EDA/World map.png");
+        background-position: center;
+        background-size: 1216px 1224px;
+        border-radius: 360px;
+}
+
+/* The Title format */
+
+.title-slide hgroup h1{
+        color: white;
+        font-size: 42px;
+        text-align: center;
+        position:fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+}
+
+/* The Author format */
+.title-slide p:nth-of-type(1){
+        color: white;
+        font-size: 24px;
+        position: fixed;
+        text-align: left;
+        left:150px;
+        bottom:40px
+}  
+
+/* The date format */
+.title-slide p:nth-of-type(2){
+        color: white;
+        font-size: 24px;
+        font-weight: 100;
+        position: fixed;
+        text-align: left;
+        left:150px;
+        bottom:20px;
+  
+} 
+/* The subtitle format "Caption" */
+
+.title-slide hgroup h2{
+        font-family: Times New Roman;
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 24px;
+        letter-spacing: 0px;
+        position: fixed;
+        right:10px;
+        bottom:20px;
+        text-align: left;
+        
+}
+/* Dark Slides format */
+
+slides > slide
+/*.dark {
+    position: absolute;
+    background: center!important;
+    background-image:url("D:/Github/Data-Analysis/Global EDA/World map.png")!important;
+  
+    
+}
+*/
+
+.dark p{
+    font-family: Times New Roman;
+    font-size: 24px;
+    color: white;
+    letter-spacing: 0px;
+    opacity: 1;
+}
+.dark::before { 
+    position: absolute; 
+    background: center!important;
+    background-image: url("D:/Github/Data-Analysis/Global EDA/World map.png")!important;
+    background-size: cover;
+}
+
+/*
+".segue" to control element slides font
+.segue h2 {
+    color: #01016b;
+    font-size: 60px;
+    
+}
+
+.segue p {
+  padding: 0px 50px;
+}
+
+slides > slide:not(.nobackground):before {
+  background-color: white;
+}
+
+<style>
+h1 { 
+ color: #3399ff;		
+}
+p { 
+ color: #3399ff;		
+}
+</style>
+*/
+
+</style>
